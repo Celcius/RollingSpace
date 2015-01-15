@@ -55,7 +55,7 @@ public class GravityElement : MonoBehaviour {
 
     public void applyGravityForce(Collider other)
     {
-
+       
         Vector3 vec = (transform.position - other.transform.position);
         float distance_squared = vec.sqrMagnitude;
         float force = (_mass / distance_squared) * gravityConstant;

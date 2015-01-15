@@ -13,6 +13,7 @@ public class OrbitalPlayerController : MonoBehaviour {
     float jumpPower = 5;
     float beforeAirbornTime = -1;
     ArrayList _collidingPlanets = new ArrayList();
+    int collisionCount = 0;
     public void setRevolver(PlayerRevolver revolver)
     {
         /*
@@ -40,7 +41,15 @@ public class OrbitalPlayerController : MonoBehaviour {
 	// Update is called once per frame
     void FixedUpdate()
     {
-        if(beforeAirbornTime > 0 && _collidingPlanets.Count == 0)
+         Vector3 newUp = -(_revolver.transform.position-transform.position).normalized;
+        if(airborn)
+        { 
+       
+        Vector3 lerpedUp = Vector3.Lerp(transform.up, newUp, Time.deltaTime).normalized;
+        transform.up = lerpedUp;
+
+        }
+        if (beforeAirbornTime > 0 && collisionCount == 0)
         {
             beforeAirbornTime -= Time.deltaTime;
             if(beforeAirbornTime <=0)
@@ -54,7 +63,8 @@ public class OrbitalPlayerController : MonoBehaviour {
         // Jump
         if (Input.GetKeyDown(KeyCode.Space) && !jumping && ! airborn && _revolver != null)
         {
-            transform.rigidbody.AddForce((_revolver.transform.position - transform.position * -jumpPower), ForceMode.Impulse);
+            transform.rigidbody.AddForce(newUp * jumpPower, ForceMode.Impulse);
+            transform.rigidbody.AddForce(new Vector3(-5,0,0),ForceMode.Impulse);
             jumping = true;
         }
 
@@ -98,6 +108,14 @@ public class OrbitalPlayerController : MonoBehaviour {
 
     void OnCollisionEnter (Collision col)
     {
+        collisionCount++;
+        if(collisionCount ==1)
+        {
+            airborn = false;
+            beforeAirbornTime = -1;
+            rigidbody.velocity = new Vector3(0, 0, 0);
+        }
+        /*
         Collider other = col.collider;
         if(other.tag == "Planet")
         {
@@ -107,14 +125,14 @@ public class OrbitalPlayerController : MonoBehaviour {
                 airborn = false;
                 beforeAirbornTime = -1;
                rigidbody.velocity = new Vector3(0, 0, 0);
-            }
+            }    
+        }*/
 
-            
-        }
     }
 
     void OnCollisionExit(Collision col)
     {
+        /*
         Collider other = col.collider;
         if (other.tag == "Planet")
         {
@@ -126,6 +144,13 @@ public class OrbitalPlayerController : MonoBehaviour {
                 beforeAirbornTime = 0.2f;
          
             }
+        }
+         * */
+        collisionCount--;
+        if (collisionCount == 0)
+        {
+            airborn = true;
+            beforeAirbornTime = 0.2f;
         }
     }
 }
