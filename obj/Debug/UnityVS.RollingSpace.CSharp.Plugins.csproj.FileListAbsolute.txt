@@ -1,0 +1,11 @@
+C:\Users\Ivo\Documents\RollingSpace\Temp\UnityVS_bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Ivo\Documents\RollingSpace\Temp\UnityVS_bin\Debug\Assembly-CSharp-firstpass.pdb
+C:\Users\Ivo\Documents\RollingSpace\Temp\UnityVS_bin\Debug\UnityEditor.dll
+C:\Users\Ivo\Documents\RollingSpace\Temp\UnityVS_bin\Debug\UnityEngine.dll
+C:\Users\Ivo\Documents\RollingSpace\Temp\UnityVS_bin\Debug\UnityEngine.UI.dll
+C:\Users\Ivo\Documents\RollingSpace\Temp\UnityVS_bin\Debug\UnityEngine.xml
+C:\Users\Ivo\Documents\RollingSpace\Temp\UnityVS_bin\Debug\UnityEditor.xml
+C:\Users\Ivo\Documents\RollingSpace\Temp\UnityVS_bin\Debug\UnityEngine.UI.xml
+C:\Users\Ivo\Documents\RollingSpace\obj\Debug\UnityVS.RollingSpace.CSharp.Plugins.csprojResolveAssemblyReference.cache
+C:\Users\Ivo\Documents\RollingSpace\obj\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Ivo\Documents\RollingSpace\obj\Debug\Assembly-CSharp-firstpass.pdb
