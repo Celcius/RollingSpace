@@ -65,7 +65,7 @@ public class GravityElement : MonoBehaviour {
 
     public void applyInvertedGravityForce(Collider other)
     {
-
+        print("INVERTED");
         Vector3 vec = (transform.position - other.transform.position);
         float distance_squared = vec.sqrMagnitude;
         float force = (_mass / distance_squared) * gravityConstant;

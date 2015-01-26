@@ -8,6 +8,9 @@ public class PlayerRevolver : MonoBehaviour {
     private const float TILES_PER_SECOND = 0.3f;
     private float checkTimeX = 0.0f;
     private float checkTimeY = 0.0f;
+   
+    [SerializeField]
+    private Moon[] moons;
 
     int currentX = 0;
     int currentY = 0;
@@ -15,7 +18,7 @@ public class PlayerRevolver : MonoBehaviour {
     int yDir = 1;
     float baseXRotation = 0.0f;
     float baseYRotation = 0.0f;
-
+    Vector3 _playerVec;
     void Start()
     {
         baseXRotation = transform.rotation.eulerAngles.z;
@@ -26,6 +29,8 @@ public class PlayerRevolver : MonoBehaviour {
 	// Update is called once per frame
     public void revolve(float moveX, float moveY,Vector3 playerVec) 
     {
+        _playerVec = playerVec;
+
                 //Quaternion deltaRotation = Quaternion.Euler(new Vector3(0.0f, acumSpeedY, acumSpeedX));
             /*
                 Quaternion deltaRotation = Quaternion.AngleAxis(acumSpeedX, transform.up) * Quaternion.AngleAxis(acumSpeedY, Vector3.right);
@@ -54,8 +59,6 @@ public class PlayerRevolver : MonoBehaviour {
 
     void Update()
     {
-//        print();
-        print(currentY);
         
         if(checkTimeX > 0)
         {
@@ -71,6 +74,12 @@ public class PlayerRevolver : MonoBehaviour {
             }
             float angle = Mathf.Lerp(0, xDir * rotationOffsetDegrees / TILES_PER_SECOND, timer);
             transform.Rotate(new Vector3(0.0f, 0.0f, 1.0f), angle, Space.World);
+        
+            foreach(Moon moon in moons)
+            {
+                moon.rotateMoonAround(transform, angle);
+            }
+
         }
         
         if (checkTimeY > 0)
@@ -84,7 +93,7 @@ public class PlayerRevolver : MonoBehaviour {
                 checkTimeY = 0;
             }
             float angle = Mathf.Lerp(0, yDir * rotationOffsetDegrees / TILES_PER_SECOND, timer);
-            transform.Rotate(new Vector3(1.0f, 0.0f, 0.0f), angle, Space.World);
+            transform.Rotate(Vector3.Cross(_playerVec, new Vector3(0.0f, 0.0f, 1.0f)), angle, Space.World);
       
         }
     }

@@ -14,10 +14,12 @@ public class OrbitalPlayerController : MonoBehaviour {
     float beforeAirbornTime = -1;
     ArrayList _collidingPlanets = new ArrayList();
     int collisionCount = 0;
+    float WALK_FORCE = 0.2f;
+
     public void setRevolver(PlayerRevolver revolver)
     {
         /*
-        print("setting revolver" + revolver + " " + force);
+        print("setting revolver" + revolver + " " + force;)
         if (_revolver == revolver)
             _currentRevolverForce = force;
         else if(force >_currentRevolverForce || _revolver == null)
@@ -64,16 +66,37 @@ public class OrbitalPlayerController : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Space) && !jumping && ! airborn && _revolver != null)
         {
             transform.rigidbody.AddForce(newUp * jumpPower, ForceMode.Impulse);
-            transform.rigidbody.AddForce(new Vector3(-5,0,0),ForceMode.Impulse);
             jumping = true;
         }
+        float moveX = Input.GetAxis("Horizontal");
+        float moveY = Input.GetAxis("Vertical");
 
-        if(_revolver != null)
+        Debug.DrawLine(transform.position, transform.position+newUp,Color.green);
+
+        // animate rotation
+        transform.Rotate(new Vector3(0.0f, 0.0f, -moveX * 5));
+        transform.Rotate(Vector3.Cross(newUp, new Vector3(0.0f, 0.0f, 1.0f)) * moveY * 5);
+
+        if (!Input.GetKey(KeyCode.LeftShift))
+        {
+            Vector3 sideAngle = new Vector3(-newUp.y, newUp.x) / Mathf.Sqrt(newUp.x * newUp.x + newUp.y * newUp.y);
+            Debug.DrawLine(transform.position, transform.position + sideAngle, Color.red);
+            if(!airborn)
+            {
+
+               transform.rigidbody.AddForce(sideAngle*-moveX*WALK_FORCE, ForceMode.Impulse);
+
+                if (moveY < 0)
+                {
+                    transform.rigidbody.velocity = new Vector3(0, 0, 0);
+                }
+            }
+        
+
+        }
+        else if(_revolver != null)
         { 
-            float moveX = Input.GetAxis("Horizontal");
-            float moveY = Input.GetAxis("Vertical");
-          
-            
+
             Vector3 toPlanet = _revolver.transform.position-transform.position;
             if (!jumping && !airborn) // Revolve planet being stand on
                 _revolver.revolve(moveX, moveY,toPlanet);
@@ -108,7 +131,8 @@ public class OrbitalPlayerController : MonoBehaviour {
 
     void OnCollisionEnter (Collision col)
     {
-        collisionCount++;
+        if(col.collider.GetComponent<WorldCollider>() != null)
+            collisionCount++;
         if(collisionCount ==1)
         {
             airborn = false;
@@ -146,7 +170,8 @@ public class OrbitalPlayerController : MonoBehaviour {
             }
         }
          * */
-        collisionCount--;
+        if (col.collider.GetComponent<WorldCollider>() != null)
+            collisionCount--;
         if (collisionCount == 0)
         {
             airborn = true;
