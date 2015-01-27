@@ -81,15 +81,22 @@ public class OrbitalPlayerController : MonoBehaviour {
         {
             Vector3 sideAngle = new Vector3(-newUp.y, newUp.x) / Mathf.Sqrt(newUp.x * newUp.x + newUp.y * newUp.y);
             Debug.DrawLine(transform.position, transform.position + sideAngle, Color.red);
-            if(!airborn)
+            if(!airborn && moveX != 0)
             {
+                
+//               transform.rigidbody.AddForce(sideAngle*-moveX*WALK_FORCE, ForceMode.Impulse);
 
-               transform.rigidbody.AddForce(sideAngle*-moveX*WALK_FORCE, ForceMode.Impulse);
-
+                rotateAround(_revolver.transform,-moveX/WALK_FORCE);
                 if (moveY < 0)
                 {
                     transform.rigidbody.velocity = new Vector3(0, 0, 0);
                 }
+            }
+            else if(moveX != 0)
+            {
+                // Move in middair
+                //this.rigidbody.AddForce(new Vector3(0.0f, 0.0f, moveX) *4, ForceMode.Impulse);
+               // rotateAround(_revolver.transform, -moveX*WALK_FORCE);
             }
         
 
@@ -100,10 +107,11 @@ public class OrbitalPlayerController : MonoBehaviour {
             Vector3 toPlanet = _revolver.transform.position-transform.position;
             if (!jumping && !airborn) // Revolve planet being stand on
                 _revolver.revolve(moveX, moveY,toPlanet);
-            else 
+            else if( moveX != 0)
             {
                 // Move in middair
-                this.rigidbody.AddForce(new Vector3(0.0f, 0.0f, moveX) *4, ForceMode.Impulse);
+                //this.rigidbody.AddForce(new Vector3(0.0f, 0.0f, moveX) *4, ForceMode.Impulse);
+              //  rotateAround(_revolver.transform, -moveX);
             }
         }
 
@@ -177,5 +185,23 @@ public class OrbitalPlayerController : MonoBehaviour {
             airborn = true;
             beforeAirbornTime = 0.2f;
         }
+    }
+
+    public void rotateAround(Transform planet, float angle)
+    {
+        //angle = NormalDir ? angle : -angle;
+
+        float curX = transform.position.x;
+        float curY = transform.position.y;
+        curX -= planet.position.x;
+        curY -= planet.position.y;
+
+        float x = Mathf.Cos(angle * Mathf.Deg2Rad) * curX - Mathf.Sin(angle * Mathf.Deg2Rad) * curY;
+        float y = Mathf.Cos(angle * Mathf.Deg2Rad) * curY + Mathf.Sin(angle * Mathf.Deg2Rad) * curX;
+        x += planet.position.x;
+        y += planet.position.y;
+        transform.position = new Vector3(x, y, transform.position.z);
+
+
     }
 }
