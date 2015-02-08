@@ -25,8 +25,8 @@ public class ZoomCamera : MonoBehaviour {
 	void Update () 
     {
 
-        bool zoomOut = Input.GetKey(KeyCode.E);
-        bool zoomIn = Input.GetKey(KeyCode.Q);
+        bool zoomOut = InputService.service().zoomOutKey();
+        bool zoomIn = InputService.service().zoomInKey();
 
         // Zoom in
         if(zoomIn && zoomState != ZoomState.ZOOM_OUT)

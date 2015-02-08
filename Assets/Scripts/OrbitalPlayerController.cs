@@ -6,15 +6,21 @@ public class OrbitalPlayerController : MonoBehaviour {
     [SerializeField]
     private PlayerRevolver _revolver = null;
 
+    [SerializeField]
+    float WALK_FORCE = 0.2f;
+    [SerializeField]
+    float AIR_WALK_FORCE = 0.8f;
+    [SerializeField]
+    float JUMP_POWER = 5;
+
     public bool airborn = true;
     bool jumping = false;
     bool isOutbound = false;
     public int gravityElementCount = 0;
-    float jumpPower = 5;
     float beforeAirbornTime = -1;
     ArrayList _collidingPlanets = new ArrayList();
     int collisionCount = 0;
-    float WALK_FORCE = 0.2f;
+    Vector3 _newUp;
 
     public void setRevolver(PlayerRevolver revolver)
     {
@@ -43,90 +49,25 @@ public class OrbitalPlayerController : MonoBehaviour {
 	// Update is called once per frame
     void FixedUpdate()
     {
-         Vector3 newUp = -(_revolver.transform.position-transform.position).normalized;
-        if(airborn)
-        { 
-       
-        Vector3 lerpedUp = Vector3.Lerp(transform.up, newUp, Time.deltaTime).normalized;
-        transform.up = lerpedUp;
+        computeState();
+        handleJump();
 
-        }
-        if (beforeAirbornTime > 0 && collisionCount == 0)
-        {
-            beforeAirbornTime -= Time.deltaTime;
-            if(beforeAirbornTime <=0)
-            {
-                beforeAirbornTime = -1;
-                airborn = true;
-            }
+        handleMovement();
+        handleOutOfBounds();
+    }   
 
-        }
-
-        // Jump
-        if (Input.GetKeyDown(KeyCode.Space) && !jumping && ! airborn && _revolver != null)
-        {
-            transform.rigidbody.AddForce(newUp * jumpPower, ForceMode.Impulse);
-            jumping = true;
-        }
-        float moveX = Input.GetAxis("Horizontal");
-        float moveY = Input.GetAxis("Vertical");
-
-        Debug.DrawLine(transform.position, transform.position+newUp,Color.green);
-
-        // animate rotation
-        transform.Rotate(new Vector3(0.0f, 0.0f, -moveX * 5));
-        transform.Rotate(Vector3.Cross(newUp, new Vector3(0.0f, 0.0f, 1.0f)) * moveY * 5);
-
-        if (!Input.GetKey(KeyCode.LeftShift))
-        {
-            Vector3 sideAngle = new Vector3(-newUp.y, newUp.x) / Mathf.Sqrt(newUp.x * newUp.x + newUp.y * newUp.y);
-            Debug.DrawLine(transform.position, transform.position + sideAngle, Color.red);
-            if(!airborn && moveX != 0)
-            {
-                
-//               transform.rigidbody.AddForce(sideAngle*-moveX*WALK_FORCE, ForceMode.Impulse);
-
-                rotateAround(_revolver.transform,-moveX/WALK_FORCE);
-                if (moveY < 0)
-                {
-                    transform.rigidbody.velocity = new Vector3(0, 0, 0);
-                }
-            }
-            else if(moveX != 0)
-            {
-                // Move in middair
-                //this.rigidbody.AddForce(new Vector3(0.0f, 0.0f, moveX) *4, ForceMode.Impulse);
-               // rotateAround(_revolver.transform, -moveX*WALK_FORCE);
-            }
-        
-
-        }
-        else if(_revolver != null)
-        { 
-
-            Vector3 toPlanet = _revolver.transform.position-transform.position;
-            if (!jumping && !airborn) // Revolve planet being stand on
-                _revolver.revolve(moveX, moveY,toPlanet);
-            else if( moveX != 0)
-            {
-                // Move in middair
-                //this.rigidbody.AddForce(new Vector3(0.0f, 0.0f, moveX) *4, ForceMode.Impulse);
-              //  rotateAround(_revolver.transform, -moveX);
-            }
-        }
-
+    void handleOutOfBounds()
+    {
         // Apply out of bounds gravity
 
         if (gravityElementCount == 0)
         {
             if (isOutbound)
             {
-
-
-
                 rigidbody.velocity = new Vector3(0, 0, 0);
                 isOutbound = true;
             }
+
             GravityElement element = _revolver.GetComponentInChildren<GravityElement>();
             element.applyInvertedGravityForce(this.collider);
 
@@ -135,7 +76,102 @@ public class OrbitalPlayerController : MonoBehaviour {
         }
         else
             isOutbound = false;
-    }   
+    }
+
+    void computeState()
+    {
+        _newUp = -(_revolver.transform.position - transform.position).normalized;
+        Vector3 lerpedUp = Vector3.Lerp(transform.up, _newUp, Time.deltaTime).normalized;
+
+        // Check Airborn
+        if (beforeAirbornTime > 0 && collisionCount == 0)
+        {
+            beforeAirbornTime -= Time.deltaTime;
+            if (beforeAirbornTime <= 0)
+            {
+                beforeAirbornTime = -1;
+                airborn = true;
+            }
+        }
+
+        if (airborn)
+        {
+            transform.up = lerpedUp;
+            _newUp = lerpedUp;
+        }
+
+        Debug.DrawLine(transform.position, transform.position + _newUp, Color.green);
+    }
+
+
+    void handleJump()
+    {
+        
+        // Jump
+        if (InputService.service().jumpKey() && !jumping && !airborn && _revolver != null)
+        {
+            transform.rigidbody.AddForce(_newUp * JUMP_POWER, ForceMode.Impulse);
+            jumping = true;
+        }
+    }
+
+    void handleMovement()
+    {
+        float moveX = InputService.service().horizontalAxis();
+        float moveY = InputService.service().verticalAxis();
+        
+        // animate rotation
+        transform.Rotate(new Vector3(0.0f, 0.0f, -moveX * 10));
+         
+        // Don't rotate planet move normally
+        bool horRot = InputService.service().horizontalRotationKey();
+        bool verRot =  InputService.service().verticalRotationKey();
+        if (!horRot && ! verRot)
+        {
+            handleSimpleMovement(moveX, moveY);
+        }
+        else if (_revolver != null)
+        {
+            moveX = horRot ? moveX : 0;
+            moveY = verRot  & ! horRot? moveY : 0;
+            handleRevolverMovement(moveX, moveY);
+        }
+
+    }
+
+    void handleRevolverMovement(float moveX, float moveY)
+    {
+
+        transform.Rotate(Vector3.Cross(_newUp, new Vector3(0.0f, 0.0f, 1.0f)) * moveY * 5);
+        Vector3 toPlanet = _revolver.transform.position - transform.position;
+
+        if (!jumping && !airborn) // Revolve planet being stand on
+            _revolver.revolve(moveX, moveY, toPlanet);
+        else if (moveX != 0)
+        {
+            // Move in middair
+            //this.rigidbody.AddForce(new Vector3(0.0f, 0.0f, moveX) *4, ForceMode.Impulse);
+            //  rotateAround(_revolver.transform, -moveX);
+        }
+    }
+    void handleSimpleMovement(float moveX, float moveY)
+    {
+            Vector3 sideAngle = new Vector3(-_newUp.y, _newUp.x) / Mathf.Sqrt(_newUp.x * _newUp.x + _newUp.y * _newUp.y);
+            Debug.DrawLine(transform.position, transform.position + sideAngle, Color.red);
+
+            float force = airborn ? AIR_WALK_FORCE : WALK_FORCE;
+            if ( moveX != 0)
+            {
+                // rotate around planet's surface 
+                rotateAround(_revolver.transform, -moveX / force);
+
+                //  manual stop
+                if (moveY < 0)
+                {
+                    transform.rigidbody.velocity = new Vector3(0, 0, 0);
+                }
+            }
+    }
 
     void OnCollisionEnter (Collision col)
     {
