@@ -14,13 +14,14 @@ public class OrbitalPlayerController : MonoBehaviour {
     float JUMP_POWER = 5;
 
     public bool airborn = true;
-    bool jumping = false;
+    public bool ungrounded = true;
     bool isOutbound = false;
     public int gravityElementCount = 0;
     float beforeAirbornTime = -1;
     ArrayList _collidingPlanets = new ArrayList();
     int collisionCount = 0;
     Vector3 _newUp;
+    Vector3 _newSideAngle;
 
     public void setRevolver(PlayerRevolver revolver)
     {
@@ -33,14 +34,13 @@ public class OrbitalPlayerController : MonoBehaviour {
             _currentRevolverForce = force;
             _revolver = revolver;
         }*/
-        airborn = false;
-        jumping = false;
+        ungrounded = false;
         _revolver = revolver;
     }
 
 	// Use this for initialization
 	void Start () {
-        airborn = true;
+        ungrounded = true;
 	}
 
     float acumSpeedX;
@@ -49,10 +49,13 @@ public class OrbitalPlayerController : MonoBehaviour {
 	// Update is called once per frame
     void FixedUpdate()
     {
-        computeState();
-        handleJump();
 
-        handleMovement();
+        float moveX = InputService.service().horizontalAxis();
+        float moveY = InputService.service().verticalAxis();
+
+        computeState();
+        handleJump(moveX,moveY);
+        handleMovement(moveX, moveY);
         handleOutOfBounds();
     }   
 
@@ -81,7 +84,7 @@ public class OrbitalPlayerController : MonoBehaviour {
     void computeState()
     {
         _newUp = -(_revolver.transform.position - transform.position).normalized;
-        Vector3 lerpedUp = Vector3.Lerp(transform.up, _newUp, Time.deltaTime).normalized;
+       // Vector3 lerpedUp = Vector3.Lerp(transform.up, _newUp, Time.deltaTime).normalized;
 
         // Check Airborn
         if (beforeAirbornTime > 0 && collisionCount == 0)
@@ -90,35 +93,81 @@ public class OrbitalPlayerController : MonoBehaviour {
             if (beforeAirbornTime <= 0)
             {
                 beforeAirbornTime = -1;
-                airborn = true;
+                ungrounded = true;
             }
         }
 
-        if (airborn)
+        if (ungrounded)
         {
-            transform.up = lerpedUp;
-            _newUp = lerpedUp;
+            transform.up = _newUp;//lerpedUp;
+            _newUp = _newUp;//lerpedUp;
         }
+
+        _newSideAngle = new Vector3(-_newUp.y, _newUp.x) / Mathf.Sqrt(_newUp.x * _newUp.x + _newUp.y * _newUp.y);
+        //Debug.DrawLine(transform.position, transform.position + _newSideAngle, Color.red);
 
         Debug.DrawLine(transform.position, transform.position + _newUp, Color.green);
+
+        // Downward feeler for non planet floor
+        UnityEngine.RaycastHit hitRay;
+         if (Physics.Raycast(transform.position, -_newUp, out hitRay, 1.0F))
+         {
+             if (hitRay.collider.tag == "Planet")
+             {
+                 Debug.Log("canJump");
+                 airborn = false;
+             }
+             else
+                 airborn = true;
+         }
+         else
+             airborn = true;
     }
 
 
-    void handleJump()
+    void handleJump(float moveX,float moveY)
     {
+     
         
         // Jump
-        if (InputService.service().jumpKey() && !jumping && !airborn && _revolver != null)
+        if (InputService.service().jumpKey())
         {
-            transform.rigidbody.AddForce(_newUp * JUMP_POWER, ForceMode.Impulse);
-            jumping = true;
+
+            if (!airborn) // regular jump
+            {
+                transform.rigidbody.AddForce(_newUp * JUMP_POWER, ForceMode.Impulse);
+            }
+            else if (ungrounded)
+            {
+               
+                if (moveX == 0)
+                    return;
+               
+                
+                 UnityEngine.RaycastHit hitRay;
+                // check side vectors
+                 Vector3 side = moveX > 0 ? _newSideAngle : -_newSideAngle; 
+                 Debug.DrawLine(transform.position, transform.position + side * 0.7F, Color.yellow);
+                    if (Physics.Raycast(transform.position, side, out hitRay, 2.0F))
+
+                    {
+                        
+                       if(hitRay.collider.tag == "Planet")
+                       {
+                           Debug.Log("Wall Jump");
+                           transform.rigidbody.AddForce(_newUp * JUMP_POWER, ForceMode.Impulse);
+                           transform.rigidbody.AddForce(-side * JUMP_POWER, ForceMode.Impulse);
+                       }
+		            }
+
+                    
+            }
         }
     }
 
-    void handleMovement()
+    void handleMovement(float moveX,float moveY)
     {
-        float moveX = InputService.service().horizontalAxis();
-        float moveY = InputService.service().verticalAxis();
+
         
         // animate rotation
         transform.Rotate(new Vector3(0.0f, 0.0f, -moveX * 10));
@@ -145,7 +194,7 @@ public class OrbitalPlayerController : MonoBehaviour {
         transform.Rotate(Vector3.Cross(_newUp, new Vector3(0.0f, 0.0f, 1.0f)) * moveY * 5);
         Vector3 toPlanet = _revolver.transform.position - transform.position;
 
-        if (!jumping && !airborn) // Revolve planet being stand on
+        if (!ungrounded) // Revolve planet being stand on
             _revolver.revolve(moveX, moveY, toPlanet);
         else if (moveX != 0)
         {
@@ -156,10 +205,9 @@ public class OrbitalPlayerController : MonoBehaviour {
     }
     void handleSimpleMovement(float moveX, float moveY)
     {
-            Vector3 sideAngle = new Vector3(-_newUp.y, _newUp.x) / Mathf.Sqrt(_newUp.x * _newUp.x + _newUp.y * _newUp.y);
-            Debug.DrawLine(transform.position, transform.position + sideAngle, Color.red);
 
-            float force = airborn ? AIR_WALK_FORCE : WALK_FORCE;
+
+            float force = ungrounded ? AIR_WALK_FORCE : WALK_FORCE;
             if ( moveX != 0)
             {
                 // rotate around planet's surface 
@@ -179,7 +227,7 @@ public class OrbitalPlayerController : MonoBehaviour {
             collisionCount++;
         if(collisionCount ==1)
         {
-            airborn = false;
+            ungrounded = false;
             beforeAirbornTime = -1;
             rigidbody.velocity = new Vector3(0, 0, 0);
         }
@@ -218,7 +266,7 @@ public class OrbitalPlayerController : MonoBehaviour {
             collisionCount--;
         if (collisionCount == 0)
         {
-            airborn = true;
+            ungrounded = true;
             beforeAirbornTime = 0.2f;
         }
     }

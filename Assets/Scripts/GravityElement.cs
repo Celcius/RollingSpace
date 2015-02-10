@@ -24,7 +24,7 @@ public class GravityElement : MonoBehaviour {
            
            OrbitalPlayerController player = other.GetComponent<OrbitalPlayerController>();
            
-           if (player.airborn)
+           if (player.ungrounded)
                 applyGravityForce(other);
 /*            if(_revolverComponent != null)
                 player.setRevolver(_revolverComponent, force);*/
