@@ -35,17 +35,18 @@ public class InputService : MonoBehaviour, ServiceEntity {
        return Input.GetAxis("Vertical");
    }
 
-   public bool horizontalRotationKey()
+   public Vector2 rotationKeys()
    {
-       return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.JoystickButton1) || Input.GetKey(KeyCode.JoystickButton2);
+       if (Input.GetKey(KeyCode.LeftShift))
+           return new Vector2(1, 1);
+       else if (Input.GetKey(KeyCode.JoystickButton1) || Input.GetKey(KeyCode.JoystickButton2))
+           return new Vector2(1, 0);
+       else if (Input.GetKey(KeyCode.JoystickButton3))
+           return new Vector2(0, 1);
+       return new Vector2(0, 0);
+           
    }
 
-   public bool verticalRotationKey()
-   {
-       return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.JoystickButton3);
-   }
-   
-   
    public bool zoomInKey()
    {
        return Input.GetKey(KeyCode.Q) || Input.GetAxis("ZoomIn") == -1;

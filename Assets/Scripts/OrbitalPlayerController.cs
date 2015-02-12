@@ -13,7 +13,6 @@ public class OrbitalPlayerController : MonoBehaviour {
     [SerializeField]
     float JUMP_POWER = 5;
 
-    public bool airborn = true;
     public bool ungrounded = true;
     bool isOutbound = false;
     public int gravityElementCount = 0;
@@ -46,16 +45,21 @@ public class OrbitalPlayerController : MonoBehaviour {
     float acumSpeedX;
     float acumSpeedY;
 	
-	// Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
 
         float moveX = InputService.service().horizontalAxis();
         float moveY = InputService.service().verticalAxis();
+        handleJump(moveX, moveY);
+        handleMovement(moveX, moveY);
+    }
+	// Update is called once per frame
+    void FixedUpdate()
+    {
+
 
         computeState();
-        handleJump(moveX,moveY);
-        handleMovement(moveX, moveY);
+
         handleOutOfBounds();
     }   
 
@@ -108,30 +112,35 @@ public class OrbitalPlayerController : MonoBehaviour {
 
         Debug.DrawLine(transform.position, transform.position + _newUp, Color.green);
 
-        // Downward feeler for non planet floor
-        UnityEngine.RaycastHit hitRay;
-         if (Physics.Raycast(transform.position, -_newUp, out hitRay, 1.0F))
-         {
-             if (hitRay.collider.tag == "Planet")
-             {
-                 Debug.Log("canJump");
-                 airborn = false;
-             }
-             else
-                 airborn = true;
-         }
-         else
-             airborn = true;
+
     }
 
 
     void handleJump(float moveX,float moveY)
     {
-     
-        
+
+        Debug.DrawRay(transform.position, -_newUp*1.0F);
         // Jump
         if (InputService.service().jumpKey())
         {
+            bool airborn = true;
+            // Downward feeler for non planet floor
+            UnityEngine.RaycastHit hitRay;
+            if (Physics.Raycast(transform.position, -_newUp, out hitRay, 1.0F))
+            {
+                /*
+                if (hitRay.collider.tag == "Planet")
+                {
+                    Debug.Log("canJump");
+                    airborn = false;
+                }
+                else
+                {
+                    Debug.Log("NOP");
+                    airborn = true;
+                }*/
+                airborn = false;
+            }
 
             if (!airborn) // regular jump
             {
@@ -143,10 +152,8 @@ public class OrbitalPlayerController : MonoBehaviour {
                 if (moveX == 0)
                     return;
                
-                
-                 UnityEngine.RaycastHit hitRay;
                 // check side vectors
-                 Vector3 side = moveX > 0 ? _newSideAngle : -_newSideAngle; 
+                 Vector3 side = moveX > 0 ? -_newSideAngle : _newSideAngle; 
                  Debug.DrawLine(transform.position, transform.position + side * 0.7F, Color.yellow);
                     if (Physics.Raycast(transform.position, side, out hitRay, 2.0F))
 
@@ -172,17 +179,19 @@ public class OrbitalPlayerController : MonoBehaviour {
         // animate rotation
         transform.Rotate(new Vector3(0.0f, 0.0f, -moveX * 10));
          
-        // Don't rotate planet move normally
-        bool horRot = InputService.service().horizontalRotationKey();
-        bool verRot =  InputService.service().verticalRotationKey();
-        if (!horRot && ! verRot)
+
+        Vector2 moveKeys = InputService.service().rotationKeys();
+
+        if (moveKeys == Vector2.zero)
         {
+            // Don't rotate planet move normally
             handleSimpleMovement(moveX, moveY);
         }
         else if (_revolver != null)
         {
-            moveX = horRot ? moveX : 0;
-            moveY = verRot  & ! horRot? moveY : 0;
+            moveX = moveKeys.x * moveX;
+            moveY = moveKeys.y * moveY;
+
             handleRevolverMovement(moveX, moveY);
         }
 
