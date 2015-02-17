@@ -24,7 +24,6 @@ public class Moon : MonoBehaviour {
         float curY = transform.position.y;
         curX -= planet.position.x;
         curY -= planet.position.y;
-        print(curX + " " + curY);
 
         float x = Mathf.Cos(angle * Mathf.Deg2Rad) * curX - Mathf.Sin(angle * Mathf.Deg2Rad) * curY;
         float y = Mathf.Cos(angle * Mathf.Deg2Rad) * curY + Mathf.Sin(angle * Mathf.Deg2Rad) * curX;

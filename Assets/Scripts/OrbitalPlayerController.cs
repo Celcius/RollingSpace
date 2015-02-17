@@ -63,6 +63,9 @@ public class OrbitalPlayerController : MonoBehaviour {
 
     void chooseCurrentRevolver()
     {
+        if (!ungrounded)
+            return;
+
         float minDistance = float.MaxValue;
         PlayerRevolver endRevolver = _revolver;
         for (int i = _revolverElements.Count - 1; i >= 0; i--)
