@@ -6,12 +6,9 @@ public class OrbitalPlayerController : MonoBehaviour {
     [SerializeField]
     private PlayerRevolver _revolver = null;
 
-    [SerializeField]
-    float WALK_FORCE = 0.2f;
-    [SerializeField]
-    float AIR_WALK_FORCE = 0.8f;
-    [SerializeField]
-    float JUMP_POWER = 5;
+    float WALK_FORCE = 0.4f;
+     const float AIR_WALK_FORCE = 1.0f;
+    float JUMP_POWER = 15;
 
     public bool ungrounded = true;
     bool isOutbound = false;
@@ -53,9 +50,11 @@ public class OrbitalPlayerController : MonoBehaviour {
 
         float moveX = InputService.service().horizontalAxis();
         float moveY = InputService.service().verticalAxis();
+        transform.Rotate(new Vector3(0.0f, 0.0f, -moveX * 10));
+
         handleJump(moveX, moveY);
         handleMovement(moveX, moveY);
-
+        computeState();
         if(jumping)
         {
             jumpCooldown -= Time.deltaTime;
@@ -70,8 +69,6 @@ public class OrbitalPlayerController : MonoBehaviour {
     void FixedUpdate()
     {
 
-
-        computeState();
 
         handleOutOfBounds();
     }   
@@ -116,7 +113,7 @@ public class OrbitalPlayerController : MonoBehaviour {
 
         if (ungrounded)
         {
-            transform.up = _newUp;//lerpedUp;
+            //transform.up = _newUp;//lerpedUp;
             _newUp = _newUp;//lerpedUp;
         }
 
@@ -131,27 +128,16 @@ public class OrbitalPlayerController : MonoBehaviour {
 
     void handleJump(float moveX,float moveY)
     {
-
-        Debug.DrawRay(transform.position, -_newUp*1.0F);
+        float feelerSize = !ungrounded ? 0.5F : 1.0F;
+        Debug.DrawRay(transform.position, -_newUp * feelerSize);
         // Jump
         if (InputService.service().jumpKey())
         {
             bool airborn = true;
             // Downward feeler for non planet floor
             UnityEngine.RaycastHit hitRay;
-            if (Physics.Raycast(transform.position, -_newUp, out hitRay, 1.0F))
+            if (Physics.Raycast(transform.position, -_newUp, out hitRay, feelerSize))
             {
-                /*
-                if (hitRay.collider.tag == "Planet")
-                {
-                    Debug.Log("canJump");
-                    airborn = false;
-                }
-                else
-                {
-                    Debug.Log("NOP");
-                    airborn = true;
-                }*/
                 airborn = false;
             }
 
@@ -195,7 +181,6 @@ public class OrbitalPlayerController : MonoBehaviour {
 
         
         // animate rotation
-        transform.Rotate(new Vector3(0.0f, 0.0f, -moveX * 10));
          
 
         Vector2 moveKeys = InputService.service().rotationKeys();
@@ -235,16 +220,11 @@ public class OrbitalPlayerController : MonoBehaviour {
 
 
             float force = ungrounded ? AIR_WALK_FORCE : WALK_FORCE;
+            
             if ( moveX != 0)
             {
-                // rotate around planet's surface 
-                rotateAround(_revolver.transform, -moveX / force);
-
-                //  manual stop
-                if (moveY < 0)
-                {
-                    transform.rigidbody.velocity = new Vector3(0, 0, 0);
-                }
+                Debug.Log("force " + force + " " + AIR_WALK_FORCE);
+                    rotateAround(_revolver.transform, -moveX / force);
             }
     }
 
@@ -254,6 +234,7 @@ public class OrbitalPlayerController : MonoBehaviour {
             collisionCount++;
         if(collisionCount ==1)
         {
+            
             ungrounded = false;
             beforeAirbornTime = -1;
             rigidbody.velocity = new Vector3(0, 0, 0);

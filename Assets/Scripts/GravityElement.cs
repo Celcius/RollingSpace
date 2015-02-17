@@ -61,6 +61,7 @@ public class GravityElement : MonoBehaviour {
         float force = (_mass / distance_squared) * gravityConstant;
 
         other.transform.rigidbody.AddForce(force * vec);
+      //  other.transform.rigidbody.AddForce(_mass*vec);
     }
 
     public void applyInvertedGravityForce(Collider other)

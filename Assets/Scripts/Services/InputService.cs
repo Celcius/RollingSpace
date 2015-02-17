@@ -22,7 +22,7 @@ public class InputService : MonoBehaviour, ServiceEntity {
 
    public bool jumpKey()
    {
-       return Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.JoystickButton0);
+       return Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0);
    }
 
    public float horizontalAxis()
