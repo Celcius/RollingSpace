@@ -8,6 +8,7 @@ public class GravityElement : MonoBehaviour {
     private PlayerRevolver _revolverComponent;
 
     static float gravityConstant = 10.0f;
+    float accumTime = 0.0f;
 
     bool isPlayerInside = false;
     void Start()
@@ -23,9 +24,15 @@ public class GravityElement : MonoBehaviour {
 
            
            OrbitalPlayerController player = other.GetComponent<OrbitalPlayerController>();
-           
-           if (player.ungrounded)
-                applyGravityForce(other);
+
+           if (player.ungrounded && player.isRevolver(_revolverComponent))
+           {
+               accumTime = player.airTime;
+               applyGravityForce(other);
+           }
+           else
+               accumTime = 0.0f;
+
 /*            if(_revolverComponent != null)
                 player.setRevolver(_revolverComponent, force);*/
             
@@ -33,6 +40,7 @@ public class GravityElement : MonoBehaviour {
             {
                 isPlayerInside = true;
                 player.gravityElementCount++;
+                player.registerRevolver(_revolverComponent);
             }
         }
 
@@ -48,6 +56,7 @@ public class GravityElement : MonoBehaviour {
                 OrbitalPlayerController player = other.GetComponent<OrbitalPlayerController>();
                 isPlayerInside = false;
                 player.gravityElementCount--;
+                player.unregisterRevolver(_revolverComponent);
             }
         }
     }
@@ -55,18 +64,18 @@ public class GravityElement : MonoBehaviour {
 
     public void applyGravityForce(Collider other)
     {
-       
+        accumTime += Time.deltaTime;
         Vector3 vec = (transform.position - other.transform.position);
-        float distance_squared = vec.sqrMagnitude;
-        float force = (_mass / distance_squared) * gravityConstant;
+        //float distance_squared = vec.sqrMagnitude;
+        //float force = (_mass / distance_squared) * gravityConstant;
 
-        other.transform.rigidbody.AddForce(force * vec);
-      //  other.transform.rigidbody.AddForce(_mass*vec);
+//        other.transform.rigidbody.AddForce(force * vec);
+        other.transform.rigidbody.AddForce((_mass+accumTime)*vec);
     }
 
     public void applyInvertedGravityForce(Collider other)
     {
-        print("INVERTED");
+        Debug.Log("INVERTED");
         Vector3 vec = (transform.position - other.transform.position);
         float distance_squared = vec.sqrMagnitude;
         float force = (_mass / distance_squared) * gravityConstant;

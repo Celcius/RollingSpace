@@ -10,6 +10,7 @@ public class OrbitalPlayerController : MonoBehaviour {
      const float AIR_WALK_FORCE = 1.0f;
     float JUMP_POWER = 15;
 
+    ArrayList _revolverElements;
     public bool ungrounded = true;
     bool isOutbound = false;
     public int gravityElementCount = 0;
@@ -21,6 +22,8 @@ public class OrbitalPlayerController : MonoBehaviour {
     bool jumping = false;
     float jumpCooldown = 0.0f;
     const float JUMP_STANDARD_COOLDOWN = 0.2f;
+
+    public float airTime;
 
     public void setRevolver(PlayerRevolver revolver)
     {
@@ -40,10 +43,46 @@ public class OrbitalPlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         ungrounded = true;
+        _revolverElements = new ArrayList();
 	}
 
     float acumSpeedX;
     float acumSpeedY;
+
+    public void registerRevolver(PlayerRevolver revolver)
+    {
+        _revolverElements.Add(revolver);
+    }
+
+    public void unregisterRevolver(PlayerRevolver revolver)
+    {
+        _revolverElements.Remove(revolver);
+        if (_revolver == revolver)
+            chooseCurrentRevolver();
+    }
+
+    void chooseCurrentRevolver()
+    {
+        float minDistance = float.MaxValue;
+        PlayerRevolver endRevolver = _revolver;
+        for (int i = _revolverElements.Count - 1; i >= 0; i--)
+        {
+            PlayerRevolver revolver = (PlayerRevolver)_revolverElements[i];
+            float dist = Vector2.Distance(transform.position, revolver.transform.position);
+            if(dist < minDistance)
+            {
+                minDistance = dist;
+                endRevolver = revolver;
+            }
+        }
+        _revolver = endRevolver;
+    }
+
+    public bool isRevolver(PlayerRevolver revolver)
+    {
+        return _revolver == revolver;
+
+    }
 	
     void Update()
     {
@@ -69,7 +108,7 @@ public class OrbitalPlayerController : MonoBehaviour {
     void FixedUpdate()
     {
 
-
+        chooseCurrentRevolver();
         handleOutOfBounds();
     }   
 
@@ -112,11 +151,9 @@ public class OrbitalPlayerController : MonoBehaviour {
         }
 
         if (ungrounded)
-        {
-            //transform.up = _newUp;//lerpedUp;
-            _newUp = _newUp;//lerpedUp;
-        }
-
+            airTime += Time.deltaTime;
+        else
+            airTime = 0.0f;
         _newSideAngle = new Vector3(-_newUp.y, _newUp.x) / Mathf.Sqrt(_newUp.x * _newUp.x + _newUp.y * _newUp.y);
         //Debug.DrawLine(transform.position, transform.position + _newSideAngle, Color.red);
 
@@ -139,6 +176,7 @@ public class OrbitalPlayerController : MonoBehaviour {
             if (Physics.Raycast(transform.position, -_newUp, out hitRay, feelerSize))
             {
                 airborn = false;
+                airTime = 0.0f;
             }
 
             if (!airborn && !jumping) // regular jump

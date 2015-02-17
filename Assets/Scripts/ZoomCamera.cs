@@ -7,7 +7,7 @@ public class ZoomCamera : MonoBehaviour {
 
     private Camera _cam;
     private const float MIN_ZOOM = 0.5f;
-    private const float MAX_ZOOM = 6.0f;
+    private const float MAX_ZOOM = 10.0f;
 
     private const float ZOOM_INCREMENT = 1;
 
