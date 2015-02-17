@@ -21,6 +21,9 @@ public class OrbitalPlayerController : MonoBehaviour {
     int collisionCount = 0;
     Vector3 _newUp;
     Vector3 _newSideAngle;
+    bool jumping = false;
+    float jumpCooldown = 0.0f;
+    const float JUMP_STANDARD_COOLDOWN = 0.2f;
 
     public void setRevolver(PlayerRevolver revolver)
     {
@@ -52,6 +55,16 @@ public class OrbitalPlayerController : MonoBehaviour {
         float moveY = InputService.service().verticalAxis();
         handleJump(moveX, moveY);
         handleMovement(moveX, moveY);
+
+        if(jumping)
+        {
+            jumpCooldown -= Time.deltaTime;
+            if(jumpCooldown<=0)
+            {
+                jumpCooldown = 0;
+                jumping = false;
+            }
+        }
     }
 	// Update is called once per frame
     void FixedUpdate()
@@ -142,11 +155,14 @@ public class OrbitalPlayerController : MonoBehaviour {
                 airborn = false;
             }
 
-            if (!airborn) // regular jump
+            if (!airborn && !jumping) // regular jump
             {
                 transform.rigidbody.AddForce(_newUp * JUMP_POWER, ForceMode.Impulse);
+                jumping = true;
+                jumpCooldown = JUMP_STANDARD_COOLDOWN;
+                
             }
-            else if (ungrounded)
+            else if (ungrounded && !jumping)
             {
                
                 if (moveX == 0)
@@ -164,6 +180,8 @@ public class OrbitalPlayerController : MonoBehaviour {
                            Debug.Log("Wall Jump");
                            transform.rigidbody.AddForce(_newUp * JUMP_POWER, ForceMode.Impulse);
                            transform.rigidbody.AddForce(-side * JUMP_POWER, ForceMode.Impulse);
+                           jumping = true;
+                           jumpCooldown = JUMP_STANDARD_COOLDOWN;
                        }
 		            }
 
