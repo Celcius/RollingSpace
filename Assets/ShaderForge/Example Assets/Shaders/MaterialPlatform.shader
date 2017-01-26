@@ -1,3 +1,11 @@
+// Upgrade NOTE: commented out 'float4 unity_LightmapST', a built-in variable
+// Upgrade NOTE: commented out 'sampler2D unity_Lightmap', a built-in variable
+// Upgrade NOTE: commented out 'sampler2D unity_LightmapInd', a built-in variable
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+// Upgrade NOTE: replaced tex2D unity_Lightmap with UNITY_SAMPLE_TEX2D
+// Upgrade NOTE: replaced tex2D unity_LightmapInd with UNITY_SAMPLE_TEX2D_SAMPLER
+
 // Shader created with Shader Forge Beta 0.34 
 // Shader Forge (c) Joachim Holmer - http://www.acegikmo.com/shaderforge/
 // Note: Manually altering this data may prevent you from opening it in Shader Forge
@@ -35,10 +43,10 @@ Shader "Shader Forge/Examples/MaterialPlatform" {
             #pragma exclude_renderers xbox360 ps3 flash 
             #pragma target 3.0
             #ifndef LIGHTMAP_OFF
-                float4 unity_LightmapST;
-                sampler2D unity_Lightmap;
+                // float4 unity_LightmapST;
+                // sampler2D unity_Lightmap;
                 #ifndef DIRLIGHTMAP_OFF
-                    sampler2D unity_LightmapInd;
+                    // sampler2D unity_LightmapInd;
                 #endif
             #endif
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
@@ -73,10 +81,10 @@ Shader "Shader Forge/Examples/MaterialPlatform" {
                 VertexOutput o;
                 o.uv0 = v.texcoord0;
                 o.vertexColor = v.vertexColor;
-                o.normalDir = mul(float4(v.normal,0), _World2Object).xyz;
-                o.tangentDir = normalize( mul( _Object2World, float4( v.tangent.xyz, 0.0 ) ).xyz );
+                o.normalDir = mul(float4(v.normal,0), unity_WorldToObject).xyz;
+                o.tangentDir = normalize( mul( unity_ObjectToWorld, float4( v.tangent.xyz, 0.0 ) ).xyz );
                 o.binormalDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
-                o.posWorld = mul(_Object2World, v.vertex);
+                o.posWorld = mul(unity_ObjectToWorld, v.vertex);
                 o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
                 #ifndef LIGHTMAP_OFF
                     o.uvLM = v.texcoord1 * unity_LightmapST.xy + unity_LightmapST.zw;
@@ -98,10 +106,10 @@ Shader "Shader Forge/Examples/MaterialPlatform" {
                 float3 normalDirection =  normalize(mul( normalLocal, tangentTransform )); // Perturbed normals
                 float3 viewReflectDirection = reflect( -viewDirection, normalDirection );
                 #ifndef LIGHTMAP_OFF
-                    float4 lmtex = tex2D(unity_Lightmap,i.uvLM);
+                    float4 lmtex = UNITY_SAMPLE_TEX2D(unity_Lightmap,i.uvLM);
                     #ifndef DIRLIGHTMAP_OFF
                         float3 lightmap = DecodeLightmap(lmtex);
-                        float3 scalePerBasisVector = DecodeLightmap(tex2D(unity_LightmapInd,i.uvLM));
+                        float3 scalePerBasisVector = DecodeLightmap(UNITY_SAMPLE_TEX2D_SAMPLER(unity_LightmapInd,unity_Lightmap,i.uvLM));
                         UNITY_DIRBASIS
                         half3 normalInRnmBasis = saturate (mul (unity_DirBasis, normalLocal));
                         lightmap *= dot (normalInRnmBasis, scalePerBasisVector);
@@ -182,10 +190,10 @@ Shader "Shader Forge/Examples/MaterialPlatform" {
             #pragma exclude_renderers xbox360 ps3 flash 
             #pragma target 3.0
             #ifndef LIGHTMAP_OFF
-                float4 unity_LightmapST;
-                sampler2D unity_Lightmap;
+                // float4 unity_LightmapST;
+                // sampler2D unity_Lightmap;
                 #ifndef DIRLIGHTMAP_OFF
-                    sampler2D unity_LightmapInd;
+                    // sampler2D unity_LightmapInd;
                 #endif
             #endif
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
@@ -216,10 +224,10 @@ Shader "Shader Forge/Examples/MaterialPlatform" {
                 VertexOutput o;
                 o.uv0 = v.texcoord0;
                 o.vertexColor = v.vertexColor;
-                o.normalDir = mul(float4(v.normal,0), _World2Object).xyz;
-                o.tangentDir = normalize( mul( _Object2World, float4( v.tangent.xyz, 0.0 ) ).xyz );
+                o.normalDir = mul(float4(v.normal,0), unity_WorldToObject).xyz;
+                o.tangentDir = normalize( mul( unity_ObjectToWorld, float4( v.tangent.xyz, 0.0 ) ).xyz );
                 o.binormalDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
-                o.posWorld = mul(_Object2World, v.vertex);
+                o.posWorld = mul(unity_ObjectToWorld, v.vertex);
                 o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
                 TRANSFER_VERTEX_TO_FRAGMENT(o)
                 return o;

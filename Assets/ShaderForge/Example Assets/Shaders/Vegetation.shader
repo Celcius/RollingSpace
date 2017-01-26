@@ -1,3 +1,11 @@
+// Upgrade NOTE: commented out 'float4 unity_LightmapST', a built-in variable
+// Upgrade NOTE: commented out 'sampler2D unity_Lightmap', a built-in variable
+// Upgrade NOTE: commented out 'sampler2D unity_LightmapInd', a built-in variable
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+// Upgrade NOTE: replaced tex2D unity_Lightmap with UNITY_SAMPLE_TEX2D
+// Upgrade NOTE: replaced tex2D unity_LightmapInd with UNITY_SAMPLE_TEX2D_SAMPLER
+
 // Shader created with Shader Forge Beta 0.34 
 // Shader Forge (c) Joachim Holmer - http://www.acegikmo.com/shaderforge/
 // Note: Manually altering this data may prevent you from opening it in Shader Forge
@@ -34,10 +42,10 @@ Shader "Shader Forge/Examples/Animated Vegetation" {
             #pragma target 3.0
             uniform float4 _TimeEditor;
             #ifndef LIGHTMAP_OFF
-                float4 unity_LightmapST;
-                sampler2D unity_Lightmap;
+                // float4 unity_LightmapST;
+                // sampler2D unity_Lightmap;
                 #ifndef DIRLIGHTMAP_OFF
-                    sampler2D unity_LightmapInd;
+                    // sampler2D unity_LightmapInd;
                 #endif
             #endif
             uniform sampler2D _Diffuse; uniform float4 _Diffuse_ST;
@@ -67,13 +75,13 @@ Shader "Shader Forge/Examples/Animated Vegetation" {
                 VertexOutput o;
                 o.uv0 = v.texcoord0;
                 o.vertexColor = v.vertexColor;
-                o.normalDir = mul(float4(v.normal,0), _World2Object).xyz;
-                o.tangentDir = normalize( mul( _Object2World, float4( v.tangent.xyz, 0.0 ) ).xyz );
+                o.normalDir = mul(float4(v.normal,0), unity_WorldToObject).xyz;
+                o.tangentDir = normalize( mul( unity_ObjectToWorld, float4( v.tangent.xyz, 0.0 ) ).xyz );
                 o.binormalDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
                 float4 node_389 = o.vertexColor;
                 float4 node_392 = _Time + _TimeEditor;
                 v.vertex.xyz += (normalize((float3(1,0.5,0.5)+v.normal))*node_389.r*sin(((node_389.b*3.141592654)+node_392.g))*0.016);
-                o.posWorld = mul(_Object2World, v.vertex);
+                o.posWorld = mul(unity_ObjectToWorld, v.vertex);
                 o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
                 #ifndef LIGHTMAP_OFF
                     o.uvLM = v.texcoord1 * unity_LightmapST.xy + unity_LightmapST.zw;
@@ -97,10 +105,10 @@ Shader "Shader Forge/Examples/Animated Vegetation" {
                 float4 node_1 = tex2D(_Diffuse,TRANSFORM_TEX(node_8972.rg, _Diffuse));
                 clip(node_1.a - 0.5);
                 #ifndef LIGHTMAP_OFF
-                    float4 lmtex = tex2D(unity_Lightmap,i.uvLM);
+                    float4 lmtex = UNITY_SAMPLE_TEX2D(unity_Lightmap,i.uvLM);
                     #ifndef DIRLIGHTMAP_OFF
                         float3 lightmap = DecodeLightmap(lmtex);
-                        float3 scalePerBasisVector = DecodeLightmap(tex2D(unity_LightmapInd,i.uvLM));
+                        float3 scalePerBasisVector = DecodeLightmap(UNITY_SAMPLE_TEX2D_SAMPLER(unity_LightmapInd,unity_Lightmap,i.uvLM));
                         UNITY_DIRBASIS
                         half3 normalInRnmBasis = saturate (mul (unity_DirBasis, normalLocal));
                         lightmap *= dot (normalInRnmBasis, scalePerBasisVector);
@@ -182,10 +190,10 @@ Shader "Shader Forge/Examples/Animated Vegetation" {
             #pragma target 3.0
             uniform float4 _TimeEditor;
             #ifndef LIGHTMAP_OFF
-                float4 unity_LightmapST;
-                sampler2D unity_Lightmap;
+                // float4 unity_LightmapST;
+                // sampler2D unity_Lightmap;
                 #ifndef DIRLIGHTMAP_OFF
-                    sampler2D unity_LightmapInd;
+                    // sampler2D unity_LightmapInd;
                 #endif
             #endif
             uniform sampler2D _Diffuse; uniform float4 _Diffuse_ST;
@@ -212,13 +220,13 @@ Shader "Shader Forge/Examples/Animated Vegetation" {
                 VertexOutput o;
                 o.uv0 = v.texcoord0;
                 o.vertexColor = v.vertexColor;
-                o.normalDir = mul(float4(v.normal,0), _World2Object).xyz;
-                o.tangentDir = normalize( mul( _Object2World, float4( v.tangent.xyz, 0.0 ) ).xyz );
+                o.normalDir = mul(float4(v.normal,0), unity_WorldToObject).xyz;
+                o.tangentDir = normalize( mul( unity_ObjectToWorld, float4( v.tangent.xyz, 0.0 ) ).xyz );
                 o.binormalDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
                 float4 node_389 = o.vertexColor;
                 float4 node_392 = _Time + _TimeEditor;
                 v.vertex.xyz += (normalize((float3(1,0.5,0.5)+v.normal))*node_389.r*sin(((node_389.b*3.141592654)+node_392.g))*0.016);
-                o.posWorld = mul(_Object2World, v.vertex);
+                o.posWorld = mul(unity_ObjectToWorld, v.vertex);
                 o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
                 TRANSFER_VERTEX_TO_FRAGMENT(o)
                 return o;
@@ -289,10 +297,10 @@ Shader "Shader Forge/Examples/Animated Vegetation" {
             #pragma target 3.0
             uniform float4 _TimeEditor;
             #ifndef LIGHTMAP_OFF
-                float4 unity_LightmapST;
-                sampler2D unity_Lightmap;
+                // float4 unity_LightmapST;
+                // sampler2D unity_Lightmap;
                 #ifndef DIRLIGHTMAP_OFF
-                    sampler2D unity_LightmapInd;
+                    // sampler2D unity_LightmapInd;
                 #endif
             #endif
             uniform sampler2D _Diffuse; uniform float4 _Diffuse_ST;
@@ -312,7 +320,7 @@ Shader "Shader Forge/Examples/Animated Vegetation" {
                 VertexOutput o;
                 o.uv0 = v.texcoord0;
                 o.vertexColor = v.vertexColor;
-                o.normalDir = mul(float4(v.normal,0), _World2Object).xyz;
+                o.normalDir = mul(float4(v.normal,0), unity_WorldToObject).xyz;
                 float4 node_389 = o.vertexColor;
                 float4 node_392 = _Time + _TimeEditor;
                 v.vertex.xyz += (normalize((float3(1,0.5,0.5)+v.normal))*node_389.r*sin(((node_389.b*3.141592654)+node_392.g))*0.016);
@@ -350,10 +358,10 @@ Shader "Shader Forge/Examples/Animated Vegetation" {
             #pragma target 3.0
             uniform float4 _TimeEditor;
             #ifndef LIGHTMAP_OFF
-                float4 unity_LightmapST;
-                sampler2D unity_Lightmap;
+                // float4 unity_LightmapST;
+                // sampler2D unity_Lightmap;
                 #ifndef DIRLIGHTMAP_OFF
-                    sampler2D unity_LightmapInd;
+                    // sampler2D unity_LightmapInd;
                 #endif
             #endif
             uniform sampler2D _Diffuse; uniform float4 _Diffuse_ST;
@@ -373,7 +381,7 @@ Shader "Shader Forge/Examples/Animated Vegetation" {
                 VertexOutput o;
                 o.uv0 = v.texcoord0;
                 o.vertexColor = v.vertexColor;
-                o.normalDir = mul(float4(v.normal,0), _World2Object).xyz;
+                o.normalDir = mul(float4(v.normal,0), unity_WorldToObject).xyz;
                 float4 node_389 = o.vertexColor;
                 float4 node_392 = _Time + _TimeEditor;
                 v.vertex.xyz += (normalize((float3(1,0.5,0.5)+v.normal))*node_389.r*sin(((node_389.b*3.141592654)+node_392.g))*0.016);

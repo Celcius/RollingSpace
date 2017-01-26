@@ -123,12 +123,12 @@ public class OrbitalPlayerController : MonoBehaviour {
         {
             if (isOutbound)
             {
-                rigidbody.velocity = new Vector3(0, 0, 0);
+                GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
                 isOutbound = true;
             }
 
             GravityElement element = _revolver.GetComponentInChildren<GravityElement>();
-            element.applyInvertedGravityForce(this.collider);
+            element.applyInvertedGravityForce(this.GetComponent<Collider>());
 
             if (element == null)
                 print("Null Gravity Element outside of borders");
@@ -184,7 +184,7 @@ public class OrbitalPlayerController : MonoBehaviour {
 
             if (!airborn && !jumping) // regular jump
             {
-                transform.rigidbody.AddForce(_newUp * JUMP_POWER, ForceMode.Impulse);
+                transform.GetComponent<Rigidbody>().AddForce(_newUp * JUMP_POWER, ForceMode.Impulse);
                 jumping = true;
                 jumpCooldown = JUMP_STANDARD_COOLDOWN;
                 
@@ -205,8 +205,8 @@ public class OrbitalPlayerController : MonoBehaviour {
                        if(hitRay.collider.tag == "Planet")
                        {
                            Debug.Log("Wall Jump");
-                           transform.rigidbody.AddForce(_newUp * JUMP_POWER, ForceMode.Impulse);
-                           transform.rigidbody.AddForce(-side * JUMP_POWER, ForceMode.Impulse);
+                           transform.GetComponent<Rigidbody>().AddForce(_newUp * JUMP_POWER, ForceMode.Impulse);
+                           transform.GetComponent<Rigidbody>().AddForce(-side * JUMP_POWER, ForceMode.Impulse);
                            jumping = true;
                            jumpCooldown = JUMP_STANDARD_COOLDOWN;
                        }
@@ -278,7 +278,7 @@ public class OrbitalPlayerController : MonoBehaviour {
             
             ungrounded = false;
             beforeAirbornTime = -1;
-            rigidbody.velocity = new Vector3(0, 0, 0);
+            GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
         }
         /*
         Collider other = col.collider;

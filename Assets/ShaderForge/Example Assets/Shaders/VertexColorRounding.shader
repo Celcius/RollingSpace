@@ -1,3 +1,6 @@
+#warning Upgrade NOTE: unity_Scale shader variable was removed; replaced 'unity_Scale.w' with '1.0'
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 // Shader created with Shader Forge Beta 0.34 
 // Shader Forge (c) Joachim Holmer - http://www.acegikmo.com/shaderforge/
 // Note: Manually altering this data may prevent you from opening it in Shader Forge
@@ -41,7 +44,7 @@ Shader "Shader Forge/Examples/Vertex Color Rounding" {
             VertexOutput vert (VertexInput v) {
                 VertexOutput o;
                 o.vertexColor = v.vertexColor;
-                o.shLight = ShadeSH9(float4(mul(_Object2World, float4(v.normal,0)).xyz * unity_Scale.w,1)) * 0.5;
+                o.shLight = ShadeSH9(float4(mul(unity_ObjectToWorld, float4(v.normal,0)).xyz * 1.0,1)) * 0.5;
                 o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
                 return o;
             }
