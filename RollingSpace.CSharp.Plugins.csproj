@@ -78,7 +78,7 @@
     <Compile Include="Assets\Standard Assets\Character Controllers\Sources\Scripts\MouseLook.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\ForceFieldShader2.shader" />
+    <None Include="Assets\Resources\Materials\ForceFieldShader2.shader" />
     <None Include="Assets\ShaderForge\Example Assets\Shaders\Cubemaps.shader" />
     <None Include="Assets\ShaderForge\Example Assets\Shaders\CustomLighting.shader" />
     <None Include="Assets\ShaderForge\Example Assets\Shaders\LightCone.shader" />
@@ -93,10 +93,6 @@
     <None Include="Assets\ShaderForge\Example Assets\Shaders\VertexAnimation.shader" />
     <None Include="Assets\ShaderForge\Example Assets\Shaders\VertexColorRounding.shader" />
     <None Include="Assets\ShaderForge\Readme.txt" />
-    <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Basic.shader" />
-    <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-BasicOutline.shader" />
-    <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Lighted.shader" />
-    <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-LightedOutline.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

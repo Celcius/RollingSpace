@@ -84,21 +84,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\GravityElement.cs" />
-    <Compile Include="Assets\Scripts\LevelChanger.cs" />
-    <Compile Include="Assets\Scripts\LookAtPlayer.cs" />
-    <Compile Include="Assets\Scripts\Moon.cs" />
-    <Compile Include="Assets\Scripts\OrbitalPlayerController.cs" />
-    <Compile Include="Assets\Scripts\PlayerRevolver.cs" />
+    <Compile Include="Assets\Scripts\Environment\Moon.cs" />
+    <Compile Include="Assets\Scripts\Environment\WorldCollider.cs" />
+    <Compile Include="Assets\Scripts\Player\OrbitalPlayerController.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerRevolver.cs" />
+    <Compile Include="Assets\Scripts\Services\GravityElement.cs" />
     <Compile Include="Assets\Scripts\Services\InputService.cs" />
+    <Compile Include="Assets\Scripts\Services\LevelChanger.cs" />
+    <Compile Include="Assets\Scripts\Services\LookAtPlayer.cs" />
     <Compile Include="Assets\Scripts\Services\ServiceLocator.cs" />
-    <Compile Include="Assets\Scripts\WorldCollider.cs" />
-    <Compile Include="Assets\Scripts\ZoomCamera.cs" />
+    <Compile Include="Assets\Scripts\Services\ZoomCamera.cs" />
     <Compile Include="Assets\ShaderForge\Example Assets\Scripts\EditorLabel.cs" />
     <Compile Include="Assets\ShaderForge\Example Assets\Scripts\EnableCameraDepthInForward.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\ForceFieldShader2.shader" />
+    <None Include="Assets\Resources\Materials\ForceFieldShader2.shader" />
     <None Include="Assets\ShaderForge\Example Assets\Shaders\Cubemaps.shader" />
     <None Include="Assets\ShaderForge\Example Assets\Shaders\CustomLighting.shader" />
     <None Include="Assets\ShaderForge\Example Assets\Shaders\LightCone.shader" />
@@ -113,10 +113,6 @@
     <None Include="Assets\ShaderForge\Example Assets\Shaders\VertexAnimation.shader" />
     <None Include="Assets\ShaderForge\Example Assets\Shaders\VertexColorRounding.shader" />
     <None Include="Assets\ShaderForge\Readme.txt" />
-    <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Basic.shader" />
-    <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-BasicOutline.shader" />
-    <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Lighted.shader" />
-    <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-LightedOutline.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
