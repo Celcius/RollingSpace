@@ -12,21 +12,23 @@ public class OrbitalTestController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A))
         {
-            _obj.rotate(-1*Time.deltaTime, 0);
+            _obj.rotate(-1, 0);
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            _obj.rotate(1 * Time.deltaTime, 0);
+            _obj.rotate(1, 0);
         }
         else if (Input.GetKey(KeyCode.W))
         {
-            _obj.rotate(0, 1 * Time.deltaTime);
+            _obj.rotate(0, 1);
         }
         else if (Input.GetKey(KeyCode.S))
         {
-            _obj.rotate(0, -1 * Time.deltaTime);
+            _obj.rotate(0, -1);
         }
+        else
+            _obj.rotate(0, 0);
     }
 }
