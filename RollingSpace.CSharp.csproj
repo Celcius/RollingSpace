@@ -73,32 +73,25 @@
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-UnityScript-firstpass">
-      <HintPath>Library\ScriptAssemblies\Assembly-UnityScript-firstpass.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="RollingSpace.CSharp.Plugins.csproj">
-      <Project>{E5FCDA72-ACB2-D69C-F03A-61D5EB53D267}</Project>
-      <Name>RollingSpace.CSharp.Plugins</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Assets\Scripts\Environment\Moon.cs" />
-    <Compile Include="Assets\Scripts\Environment\WorldCollider.cs" />
-    <Compile Include="Assets\Scripts\Player\OrbitalPlayerController.cs" />
-    <Compile Include="Assets\Scripts\Player\PlayerRevolver.cs" />
-    <Compile Include="Assets\Scripts\Services\GravityElement.cs" />
-    <Compile Include="Assets\Scripts\Services\InputService.cs" />
-    <Compile Include="Assets\Scripts\Services\LevelChanger.cs" />
-    <Compile Include="Assets\Scripts\Services\LookAtPlayer.cs" />
-    <Compile Include="Assets\Scripts\Services\ServiceLocator.cs" />
-    <Compile Include="Assets\Scripts\Services\ZoomCamera.cs" />
+    <Compile Include="Assets\OldGame\Scripts\Environment\Moon.cs" />
+    <Compile Include="Assets\OldGame\Scripts\Environment\WorldCollider.cs" />
+    <Compile Include="Assets\OldGame\Scripts\Player\OrbitalPlayerController.cs" />
+    <Compile Include="Assets\OldGame\Scripts\Player\PlayerRevolver.cs" />
+    <Compile Include="Assets\OldGame\Scripts\Services\GravityElement.cs" />
+    <Compile Include="Assets\OldGame\Scripts\Services\InputService.cs" />
+    <Compile Include="Assets\OldGame\Scripts\Services\LevelChanger.cs" />
+    <Compile Include="Assets\OldGame\Scripts\Services\LookAtPlayer.cs" />
+    <Compile Include="Assets\OldGame\Scripts\Services\ServiceLocator.cs" />
+    <Compile Include="Assets\OldGame\Scripts\Services\ZoomCamera.cs" />
+    <Compile Include="Assets\Resources\Scripts\Environment\RotateableObject.cs" />
+    <Compile Include="Assets\Resources\Scripts\Services\OrbitalTestController.cs" />
     <Compile Include="Assets\ShaderForge\Example Assets\Scripts\EditorLabel.cs" />
     <Compile Include="Assets\ShaderForge\Example Assets\Scripts\EnableCameraDepthInForward.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Resources\Materials\ForceFieldShader2.shader" />
+    <None Include="Assets\OldGame\Resources\Materials\ForceFieldShader2.shader" />
     <None Include="Assets\ShaderForge\Example Assets\Shaders\Cubemaps.shader" />
     <None Include="Assets\ShaderForge\Example Assets\Shaders\CustomLighting.shader" />
     <None Include="Assets\ShaderForge\Example Assets\Shaders\LightCone.shader" />

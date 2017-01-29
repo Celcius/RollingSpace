@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RollingSpace.CSharp.Plugins", "RollingSpace.CSharp.Plugins.csproj", "{E5FCDA72-ACB2-D69C-F03A-61D5EB53D267}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RollingSpace.CSharp", "RollingSpace.CSharp.csproj", "{55FD1102-896B-26E3-E1F1-C6FADB2844F0}"
 EndProject
 Global
@@ -11,10 +9,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E5FCDA72-ACB2-D69C-F03A-61D5EB53D267}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E5FCDA72-ACB2-D69C-F03A-61D5EB53D267}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E5FCDA72-ACB2-D69C-F03A-61D5EB53D267}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E5FCDA72-ACB2-D69C-F03A-61D5EB53D267}.Release|Any CPU.Build.0 = Release|Any CPU
 		{55FD1102-896B-26E3-E1F1-C6FADB2844F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{55FD1102-896B-26E3-E1F1-C6FADB2844F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55FD1102-896B-26E3-E1F1-C6FADB2844F0}.Release|Any CPU.ActiveCfg = Release|Any CPU

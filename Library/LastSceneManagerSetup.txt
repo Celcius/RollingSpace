@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Standard Assets/Toon Shading/_ToonShadingSample.unity
+- path: Assets/Resources/Scenes/TestScene.unity
   isLoaded: 1
   isActive: 1
