@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+public enum RotationDir { LEFT, RIGHT, UP, DOWN, NONE };
 
 public class RotateableObject : MonoBehaviour {
 
@@ -14,24 +17,25 @@ public class RotateableObject : MonoBehaviour {
     Quaternion rotationTarget;
 
 
-    public void rotate(float xAxis, float yAxis)
+    public void rotate(RotationDir dir)
     {
+        Vector2 axis = parseDir(dir);
         if (_reference == null)
             return;
 
         if (!rotating)
         {
-            if (xAxis != 0)
+            if (axis.x != 0)
             {
-                float targetAngle = xAxis * segmentAngle;
+                float targetAngle = axis.x * segmentAngle;
                 rotating = true;
                 
                 Vector3 xRotation = gameObject.transform.InverseTransformDirection(-Vector3.forward);
                 rotationTarget = transform.rotation * Quaternion.Euler(xRotation * targetAngle);
             }
-            else if (yAxis != 0)
+            else if (axis.y != 0)
             {
-                float targetAngle = yAxis * segmentAngle;
+                float targetAngle = axis.y * segmentAngle;
                 rotating = true;
 
                 Vector3 up = (_reference.position - transform.position).normalized;
@@ -51,5 +55,24 @@ public class RotateableObject : MonoBehaviour {
                 rotating = false;
             }
         }
+    }
+
+    private Vector2 parseDir(RotationDir dir)
+    {
+        switch(dir)
+        {
+            case RotationDir.LEFT:
+                return new Vector2(-1, 0);
+            case RotationDir.RIGHT:
+                return new Vector2(1, 0);
+            case RotationDir.UP:
+                return new Vector2(0, 1);
+            case RotationDir.DOWN:
+                return new Vector2(0, -1);
+            case RotationDir.NONE:
+                return new Vector2(0, 0);
+        }
+
+        return new Vector2(0, 0);
     }
 }

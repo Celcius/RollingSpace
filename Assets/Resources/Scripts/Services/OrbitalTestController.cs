@@ -14,21 +14,21 @@ public class OrbitalTestController : MonoBehaviour {
 	void Update () {
         if (Input.GetKey(KeyCode.A))
         {
-            _obj.rotate(-1, 0);
+            _obj.rotate(RotationDir.LEFT);
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            _obj.rotate(1, 0);
+            _obj.rotate(RotationDir.RIGHT);
         }
         else if (Input.GetKey(KeyCode.W))
         {
-            _obj.rotate(0, 1);
+            _obj.rotate(RotationDir.UP);
         }
         else if (Input.GetKey(KeyCode.S))
         {
-            _obj.rotate(0, -1);
+            _obj.rotate(RotationDir.DOWN);
         }
         else
-            _obj.rotate(0, 0);
+            _obj.rotate(RotationDir.NONE);
     }
 }

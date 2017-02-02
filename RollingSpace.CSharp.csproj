@@ -75,6 +75,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\GravityTarget.cs" />
+    <Compile Include="Assets\GravityTargetPlayer.cs" />
     <Compile Include="Assets\OldGame\Scripts\Environment\Moon.cs" />
     <Compile Include="Assets\OldGame\Scripts\Environment\WorldCollider.cs" />
     <Compile Include="Assets\OldGame\Scripts\Player\OrbitalPlayerController.cs" />
@@ -85,7 +87,9 @@
     <Compile Include="Assets\OldGame\Scripts\Services\LookAtPlayer.cs" />
     <Compile Include="Assets\OldGame\Scripts\Services\ServiceLocator.cs" />
     <Compile Include="Assets\OldGame\Scripts\Services\ZoomCamera.cs" />
+    <Compile Include="Assets\Resources\Scripts\Environment\GravityObject.cs" />
     <Compile Include="Assets\Resources\Scripts\Environment\RotateableObject.cs" />
+    <Compile Include="Assets\Resources\Scripts\Player\PlayerController.cs" />
     <Compile Include="Assets\Resources\Scripts\Services\OrbitalTestController.cs" />
     <Compile Include="Assets\ShaderForge\Example Assets\Scripts\EditorLabel.cs" />
     <Compile Include="Assets\ShaderForge\Example Assets\Scripts\EnableCameraDepthInForward.cs" />
